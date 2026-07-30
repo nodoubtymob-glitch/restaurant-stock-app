@@ -6,9 +6,10 @@ import { createClient } from '@/lib/supabase/client'
 import PageHeader from '@/components/ui/PageHeader'
 import StatCard from '@/components/ui/StatCard'
 import Modal from '@/components/ui/Modal'
+import DateRange from '@/components/ui/DateRange'
 import { FullSpinner } from '@/components/ui/Spinner'
 import { Revenue } from '@/lib/types'
-import { brl, num, daysAgoISO, todayISO } from '@/lib/format'
+import { brl, num, daysAgoISO, todayISO, eachDayISO } from '@/lib/format'
 
 interface StockItem {
   id: string
@@ -23,15 +24,10 @@ interface DayBar {
   value: number
 }
 
-const PERIODS = [
-  { key: 'today', label: 'Hoje', days: 0 },
-  { key: '7d', label: '7 dias', days: 6 },
-  { key: '30d', label: '30 dias', days: 29 },
-] as const
-
 export default function DashboardPage() {
   const supabase = createClient()
-  const [period, setPeriod] = useState<(typeof PERIODS)[number]['key']>('7d')
+  const [start, setStart] = useState(daysAgoISO(6))
+  const [end, setEnd] = useState(todayISO())
   const [loading, setLoading] = useState(true)
   const [revenue, setRevenue] = useState<Revenue | null>(null)
   const [outItems, setOutItems] = useState<StockItem[]>([])
@@ -42,10 +38,6 @@ export default function DashboardPage() {
   const alertedRef = useRef(false)
 
   useEffect(() => {
-    const days = PERIODS.find((p) => p.key === period)!.days
-    const start = daysAgoISO(days)
-    const end = todayISO()
-
     const load = async () => {
       setLoading(true)
 
@@ -59,6 +51,7 @@ export default function DashboardPage() {
           .select('quantity_change,recorded_at,product_id,movement_type')
           .eq('movement_type', 'saída')
           .gte('recorded_at', start + 'T00:00:00')
+          .lte('recorded_at', end + 'T23:59:59')
           .order('recorded_at'),
         supabase.from('products').select('id', { count: 'exact', head: true }),
       ])
@@ -84,22 +77,20 @@ export default function DashboardPage() {
       setLowItems(low)
       setProductCount(count.count || 0)
 
-      // Show the alert popup once per visit when there's something wrong.
       if (!alertedRef.current && out.length + low.length > 0) {
         setShowAlert(true)
         alertedRef.current = true
       }
 
-      // Daily sales bars
       const { data: pricing } = await supabase
         .from('product_pricing')
         .select('product_id,sale_price')
       const priceMap = new Map<string, number>()
       ;(pricing || []).forEach((p: any) => priceMap.set(p.product_id, p.sale_price))
 
-      const dayCount = days + 1
+      const days = eachDayISO(start, end)
       const buckets = new Map<string, number>()
-      for (let i = 0; i < dayCount; i++) buckets.set(daysAgoISO(days - i), 0)
+      days.forEach((d) => buckets.set(d, 0))
       ;(moves.data as any[] | null)?.forEach((m) => {
         const day = m.recorded_at.slice(0, 10)
         if (!buckets.has(day)) return
@@ -117,7 +108,7 @@ export default function DashboardPage() {
     }
     load()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [period])
+  }, [start, end])
 
   const maxBar = Math.max(1, ...bars.map((b) => b.value))
   const alertCount = outItems.length + lowItems.length
@@ -136,19 +127,15 @@ export default function DashboardPage() {
         }
       />
 
-      {/* Period selector */}
-      <div className="mb-4 inline-flex rounded-xl bg-black/[0.05] p-1">
-        {PERIODS.map((p) => (
-          <button
-            key={p.key}
-            onClick={() => setPeriod(p.key)}
-            className={`rounded-lg px-3.5 py-1.5 text-sm font-semibold transition ${
-              period === p.key ? 'bg-ember text-coal-50 shadow-glow-sm' : 'text-coal-400'
-            }`}
-          >
-            {p.label}
-          </button>
-        ))}
+      <div className="card mb-4 p-4">
+        <DateRange
+          start={start}
+          end={end}
+          onChange={(s, e) => {
+            setStart(s)
+            setEnd(e)
+          }}
+        />
       </div>
 
       {loading ? (
@@ -168,9 +155,8 @@ export default function DashboardPage() {
             <StatCard icon="📦" tone="neutral" label="Produtos" value={productCount} />
           </div>
 
-          {/* Daily sales chart */}
           <div className="card p-4">
-            <p className="mb-3 text-sm font-semibold text-coal-400">Vendas por dia</p>
+            <p className="mb-3 text-sm font-bold text-coal-300">Vendas por dia</p>
             {bars.every((b) => b.value === 0) ? (
               <p className="py-8 text-center text-sm text-coal-400">Sem vendas no período.</p>
             ) : (
@@ -184,7 +170,7 @@ export default function DashboardPage() {
                         title={brl(b.value)}
                       />
                     </div>
-                    {bars.length <= 10 && (
+                    {bars.length <= 14 && (
                       <span className="text-[9px] text-coal-400">{b.label}</span>
                     )}
                   </div>
@@ -193,10 +179,9 @@ export default function DashboardPage() {
             )}
           </div>
 
-          {/* Stock alerts card */}
           <div className="card p-4">
             <div className="mb-3 flex items-center justify-between">
-              <p className="text-sm font-semibold text-coal-400">Alertas de estoque</p>
+              <p className="text-sm font-bold text-coal-300">Alertas de estoque</p>
               {alertCount > 0 && <span className="badge-red">{alertCount}</span>}
             </div>
             {alertCount === 0 ? (
@@ -210,9 +195,9 @@ export default function DashboardPage() {
                   return (
                     <div
                       key={p.id}
-                      className="flex items-center justify-between rounded-xl bg-black/[0.05] px-3.5 py-2.5"
+                      className="flex items-center justify-between rounded-2xl bg-black/[0.04] px-3.5 py-2.5"
                     >
-                      <span className="truncate font-medium">{p.name}</span>
+                      <span className="truncate font-semibold">{p.name}</span>
                       <span className={out ? 'badge-red shrink-0' : 'badge-amber shrink-0'}>
                         {out
                           ? '⛔ Esgotado'
@@ -223,7 +208,7 @@ export default function DashboardPage() {
                 })}
                 <Link
                   href="/admin/products"
-                  className="mt-1 block text-center text-sm font-semibold text-ember-300 hover:underline"
+                  className="mt-1 block text-center text-sm font-bold text-ember-700 hover:underline"
                 >
                   Ver produtos →
                 </Link>
@@ -233,7 +218,6 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Auto popup: what ran out and what's running low */}
       <Modal
         open={showAlert}
         onClose={() => setShowAlert(false)}
@@ -259,9 +243,9 @@ export default function DashboardPage() {
                 {outItems.map((p) => (
                   <div
                     key={p.id}
-                    className="flex items-center justify-between rounded-xl border border-red-500/20 bg-red-500/10 px-3.5 py-2.5"
+                    className="flex items-center justify-between rounded-2xl border border-red-500/20 bg-red-50 px-3.5 py-2.5"
                   >
-                    <span className="truncate font-medium">{p.name}</span>
+                    <span className="truncate font-semibold">{p.name}</span>
                     <span className="badge-red shrink-0">0 {p.unit?.abbreviation || ''}</span>
                   </div>
                 ))}
@@ -278,9 +262,9 @@ export default function DashboardPage() {
                 {lowItems.map((p) => (
                   <div
                     key={p.id}
-                    className="flex items-center justify-between rounded-xl border border-amber-500/20 bg-amber-500/10 px-3.5 py-2.5"
+                    className="flex items-center justify-between rounded-2xl border border-amber-500/20 bg-amber-50 px-3.5 py-2.5"
                   >
-                    <span className="truncate font-medium">{p.name}</span>
+                    <span className="truncate font-semibold">{p.name}</span>
                     <span className="badge-amber shrink-0">
                       {num(p.current_quantity)} {p.unit?.abbreviation || ''} · mín{' '}
                       {num(p.low_stock_threshold)}

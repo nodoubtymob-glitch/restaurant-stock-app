@@ -37,3 +37,15 @@ export function daysAgoISO(days: number): string {
   d.setDate(d.getDate() - days)
   return d.toISOString().slice(0, 10)
 }
+
+/** List of ISO day strings from start to end (inclusive), capped for safety. */
+export function eachDayISO(startISO: string, endISO: string, cap = 120): string[] {
+  const out: string[] = []
+  const d = new Date(startISO + 'T00:00:00')
+  const end = new Date(endISO + 'T00:00:00')
+  while (d <= end && out.length < cap) {
+    out.push(d.toISOString().slice(0, 10))
+    d.setDate(d.getDate() + 1)
+  }
+  return out
+}
