@@ -202,6 +202,26 @@ CREATE TRIGGER stock_movements_update_quantity
   FOR EACH ROW
   EXECUTE FUNCTION update_product_quantity();
 
+-- 8b. PREVENT NEGATIVE STOCK — a saída can never exceed what's in stock.
+CREATE OR REPLACE FUNCTION prevent_negative_stock()
+RETURNS TRIGGER AS $$
+DECLARE cur NUMERIC;
+BEGIN
+  IF NEW.quantity_change < 0 THEN
+    SELECT current_quantity INTO cur FROM products WHERE id = NEW.product_id FOR UPDATE;
+    IF cur + NEW.quantity_change < 0 THEN
+      RAISE EXCEPTION 'estoque insuficiente (disponivel %, solicitado %)', cur, abs(NEW.quantity_change);
+    END IF;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER stock_movements_prevent_negative
+  BEFORE INSERT ON stock_movements
+  FOR EACH ROW
+  EXECUTE FUNCTION prevent_negative_stock();
+
 -- 9. NEW USER TRIGGER — auto-create a profile row when an auth user is created.
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$

@@ -49,7 +49,11 @@ export default function QuickSaida() {
     [products, search]
   )
 
+  // The max you can take out is whatever is in stock.
+  const max = selected ? Math.max(0, selected.current_quantity) : 0
+
   const open = (p: Prod) => {
+    if (p.current_quantity <= 0) return // esgotado — nada a retirar
     setSelected(p)
     setQty(1)
   }
@@ -58,8 +62,10 @@ export default function QuickSaida() {
     setSelected(null)
   }
 
+  const clamp = (v: number) => Math.max(1, Math.min(max, v))
+
   const confirm = async () => {
-    if (!selected || qty <= 0) return
+    if (!selected || qty <= 0 || qty > max) return
     setSubmitting(true)
     try {
       const { data: auth } = await supabase.auth.getUser()
@@ -76,7 +82,6 @@ export default function QuickSaida() {
         } · ${selected.name}`,
         'success'
       )
-      // optimistic local stock update
       setProducts((list) =>
         list.map((p) =>
           p.id === selected.id
@@ -104,6 +109,7 @@ export default function QuickSaida() {
     )
 
   const unitLabel = selected?.unit?.abbreviation || selected?.unit?.name || ''
+  const chips = [1, 2, 5, 10].filter((n) => n <= max)
 
   return (
     <div>
@@ -117,12 +123,18 @@ export default function QuickSaida() {
       {/* Product tap grid */}
       <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
         {filtered.map((p) => {
-          const low = p.current_quantity <= p.low_stock_threshold
+          const out = p.current_quantity <= 0
+          const low = !out && p.current_quantity <= p.low_stock_threshold
           return (
             <button
               key={p.id}
               onClick={() => open(p)}
-              className="card card-hover flex flex-col items-center gap-2 p-3 text-center active:scale-[0.98]"
+              disabled={out}
+              className={`card flex flex-col items-center gap-2 p-3 text-center transition ${
+                out
+                  ? 'cursor-not-allowed opacity-50'
+                  : 'card-hover active:scale-[0.98]'
+              }`}
             >
               <div className="h-16 w-16 overflow-hidden rounded-2xl bg-coal-850">
                 {p.photo_url ? (
@@ -137,8 +149,8 @@ export default function QuickSaida() {
               <span className="line-clamp-2 text-sm font-semibold leading-tight">
                 {p.name}
               </span>
-              <span className={low ? 'badge-red' : 'badge-muted'}>
-                {num(p.current_quantity)} {p.unit?.abbreviation || ''}
+              <span className={out ? 'badge-red' : low ? 'badge-amber' : 'badge-muted'}>
+                {out ? 'Esgotado' : `${num(p.current_quantity)} ${p.unit?.abbreviation || ''}`}
               </span>
             </button>
           )
@@ -159,18 +171,21 @@ export default function QuickSaida() {
             <div className="card m-2 rounded-3xl p-5 safe-bottom">
               <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-white/15" />
 
-              <div className="mb-5 text-center">
+              <div className="mb-1 text-center">
                 <p className="text-lg font-bold">{selected.name}</p>
                 <p className="text-sm text-coal-100/45">
                   Em estoque: {num(selected.current_quantity)} {unitLabel}
                 </p>
               </div>
+              <p className="mb-4 text-center text-xs font-semibold text-ember-300/80">
+                máximo: {num(max)} {unitLabel}
+              </p>
 
               {/* Big stepper */}
               <div className="mb-4 flex items-center justify-center gap-5">
                 <button
                   className="grid h-16 w-16 place-items-center rounded-full bg-white/5 text-3xl font-bold active:scale-95 disabled:opacity-40"
-                  onClick={() => setQty((q) => Math.max(1, q - 1))}
+                  onClick={() => setQty((q) => clamp(q - 1))}
                   disabled={qty <= 1}
                 >
                   −
@@ -182,16 +197,17 @@ export default function QuickSaida() {
                   </div>
                 </div>
                 <button
-                  className="grid h-16 w-16 place-items-center rounded-full bg-white/5 text-3xl font-bold active:scale-95"
-                  onClick={() => setQty((q) => q + 1)}
+                  className="grid h-16 w-16 place-items-center rounded-full bg-white/5 text-3xl font-bold active:scale-95 disabled:opacity-40"
+                  onClick={() => setQty((q) => clamp(q + 1))}
+                  disabled={qty >= max}
                 >
                   +
                 </button>
               </div>
 
-              {/* Quick chips */}
-              <div className="mb-5 flex justify-center gap-2">
-                {[1, 2, 5, 10].map((n) => (
+              {/* Quick chips + "tudo" */}
+              <div className="mb-5 flex flex-wrap justify-center gap-2">
+                {chips.map((n) => (
                   <button
                     key={n}
                     onClick={() => setQty(n)}
@@ -204,6 +220,18 @@ export default function QuickSaida() {
                     {n}
                   </button>
                 ))}
+                {max > 0 && (
+                  <button
+                    onClick={() => setQty(max)}
+                    className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
+                      qty === max
+                        ? 'bg-ember text-white shadow-glow-sm'
+                        : 'bg-white/5 text-coal-100/60'
+                    }`}
+                  >
+                    Tudo ({num(max)})
+                  </button>
+                )}
               </div>
 
               <div className="flex gap-2">
@@ -213,7 +241,7 @@ export default function QuickSaida() {
                 <button
                   className="btn-primary btn-lg flex-[2]"
                   onClick={confirm}
-                  disabled={submitting}
+                  disabled={submitting || qty > max || max <= 0}
                 >
                   {submitting ? <Spinner /> : '📤'} Confirmar saída
                 </button>
