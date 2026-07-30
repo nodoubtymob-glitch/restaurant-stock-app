@@ -3,6 +3,7 @@
 import { FormEvent, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import Spinner from '@/components/ui/Spinner'
 
 export default function LoginForm() {
   const [email, setEmail] = useState('')
@@ -10,77 +11,70 @@ export default function LoginForm() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError('')
     setLoading(true)
-
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
+      const supabase = createClient()
+      const { error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) {
-        setError(error.message)
+        setError('E-mail ou senha incorretos.')
         return
       }
-
       router.push('/')
       router.refresh()
-    } catch (err: any) {
-      setError(err?.message || 'Erro ao fazer login')
+    } catch {
+      setError('Não foi possível entrar. Tente de novo.')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="email" className="block text-sm font-medium mb-1">
-          Email
+        <label htmlFor="email" className="label">
+          E-mail
         </label>
         <input
           id="email"
           type="email"
+          autoComplete="email"
+          inputMode="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="w-full"
-          placeholder="seu@email.com"
+          className="field"
+          placeholder="voce@brasaroots.com"
         />
       </div>
 
       <div>
-        <label htmlFor="password" className="block text-sm font-medium mb-1">
+        <label htmlFor="password" className="label">
           Senha
         </label>
         <input
           id="password"
           type="password"
+          autoComplete="current-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="w-full"
+          className="field"
           placeholder="••••••••"
         />
       </div>
 
       {error && (
-        <div className="p-3 bg-red-100 text-red-700 rounded-md text-sm">
+        <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-3.5 py-2.5 text-sm text-red-200">
           {error}
         </div>
       )}
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full bg-blue-600 text-white py-2 rounded-md font-medium hover:bg-blue-700 disabled:opacity-50"
-      >
-        {loading ? 'Entrando...' : 'Entrar'}
+      <button type="submit" disabled={loading} className="btn-primary btn-lg w-full">
+        {loading ? <Spinner /> : '🔥'} {loading ? 'Entrando...' : 'Entrar'}
       </button>
     </form>
   )
