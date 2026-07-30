@@ -142,6 +142,23 @@ export default function AppShell({
           <div className="mx-auto flex max-w-lg items-stretch justify-around px-2 pt-1.5">
             {bottomNav.map((item) => {
               const active = isActive(item.href)
+              const primary = item.href === '/stock/saida'
+              // The saída action is the day-to-day star: always shown as a
+              // raised ember button so it stands out in the bar.
+              if (primary) {
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="flex flex-1 flex-col items-center gap-0.5 px-1 text-[10px] font-bold text-ember-300"
+                  >
+                    <span className="-mt-4 grid h-14 w-14 place-items-center rounded-2xl bg-ember text-2xl shadow-glow ring-4 ring-coal-950">
+                      {item.icon}
+                    </span>
+                    {item.label}
+                  </Link>
+                )
+              }
               return (
                 <Link
                   key={item.href}
