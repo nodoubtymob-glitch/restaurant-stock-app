@@ -1,89 +1,123 @@
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+'use client'
 
-export default async function HistoricoPage() {
-  const cookieStore = cookies()
+import { useEffect, useMemo, useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
+import PageHeader from '@/components/ui/PageHeader'
+import { FullSpinner } from '@/components/ui/Spinner'
+import EmptyState from '@/components/ui/EmptyState'
+import { dateTimeBR, num } from '@/lib/format'
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-        setAll(cookiesToSet: { name: string; value: string; options?: any }[]) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          } catch {}
-        },
-      },
+interface Movement {
+  id: string
+  quantity_change: number
+  movement_type: 'entrada' | 'saída'
+  notes: string | null
+  recorded_at: string
+  product?: { name: string; unit?: { abbreviation: string | null } | null } | null
+  recorded_by_profile?: { email: string } | null
+}
+
+type Filter = 'all' | 'entrada' | 'saída'
+
+export default function HistoricoPage() {
+  const supabase = createClient()
+  const [movements, setMovements] = useState<Movement[]>([])
+  const [loading, setLoading] = useState(true)
+  const [filter, setFilter] = useState<Filter>('all')
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true)
+      const { data } = await supabase
+        .from('stock_movements')
+        .select(
+          'id,quantity_change,movement_type,notes,recorded_at,product:products(name,unit:units(abbreviation)),recorded_by_profile:profiles(email)'
+        )
+        .order('recorded_at', { ascending: false })
+        .limit(150)
+      setMovements((data as any as Movement[]) || [])
+      setLoading(false)
     }
+    load()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const filtered = useMemo(
+    () => movements.filter((m) => filter === 'all' || m.movement_type === filter),
+    [movements, filter]
   )
 
-  const { data: movements } = await supabase
-    .from('stock_movements')
-    .select('*')
-    .order('recorded_at', { ascending: false })
-    .limit(50)
+  const tabs: { key: Filter; label: string }[] = [
+    { key: 'all', label: 'Tudo' },
+    { key: 'entrada', label: '📥 Entradas' },
+    { key: 'saída', label: '📤 Saídas' },
+  ]
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Histórico
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Todas as movimentações de estoque
-        </p>
+    <div>
+      <PageHeader title="Histórico" subtitle="Todas as movimentações de estoque" />
+
+      <div className="mb-4 flex gap-1.5">
+        {tabs.map((t) => (
+          <button
+            key={t.key}
+            onClick={() => setFilter(t.key)}
+            className={`rounded-xl px-3.5 py-2 text-sm font-semibold transition ${
+              filter === t.key
+                ? 'bg-ember-soft text-ember-200 ring-1 ring-inset ring-ember-500/20'
+                : 'bg-white/5 text-coal-100/50 hover:text-coal-100'
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
       </div>
 
-      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden">
-        {movements && movements.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800">
-                <tr>
-                  <th className="px-4 py-3 text-left font-semibold">Data</th>
-                  <th className="px-4 py-3 text-left font-semibold">Tipo</th>
-                  <th className="px-4 py-3 text-left font-semibold">Quantidade</th>
-                  <th className="px-4 py-3 text-left font-semibold">Usuário</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
-                {movements.map((mov: any) => (
-                  <tr key={mov.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
-                    <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
-                      {new Date(mov.recorded_at).toLocaleString('pt-BR')}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`px-2 py-1 rounded text-xs font-medium ${
-                          mov.movement_type === 'entrada'
-                            ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
-                            : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300'
-                        }`}
-                      >
-                        {mov.movement_type === 'entrada' ? 'Entrada' : 'Saída'}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">{mov.quantity_change}</td>
-                    <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
-                      {mov.recorded_by}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="p-6 text-center text-gray-500 dark:text-gray-400">
-            Nenhuma movimentação registrada ainda.
-          </div>
-        )}
-      </div>
+      {loading ? (
+        <FullSpinner label="Carregando histórico..." />
+      ) : filtered.length === 0 ? (
+        <EmptyState icon="🧾" title="Nenhuma movimentação" description="As entradas e saídas aparecerão aqui." />
+      ) : (
+        <div className="space-y-2">
+          {filtered.map((m) => {
+            const out = m.movement_type === 'saída'
+            return (
+              <div key={m.id} className="card flex items-center gap-3 p-3.5">
+                <div
+                  className={`stat-icon shrink-0 ${
+                    out ? 'bg-red-500/15 text-red-300' : 'bg-emerald-500/15 text-emerald-300'
+                  }`}
+                >
+                  {out ? '📤' : '📥'}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-semibold">
+                    {m.product?.name || 'Produto removido'}
+                  </p>
+                  <p className="truncate text-xs text-coal-100/45">
+                    {dateTimeBR(m.recorded_at)}
+                    {m.recorded_by_profile?.email
+                      ? ` · ${m.recorded_by_profile.email}`
+                      : ''}
+                    {m.notes ? ` · ${m.notes}` : ''}
+                  </p>
+                </div>
+                <div
+                  className={`shrink-0 text-right font-bold ${
+                    out ? 'text-red-300' : 'text-emerald-300'
+                  }`}
+                >
+                  {out ? '−' : '+'}
+                  {num(Math.abs(m.quantity_change))}
+                  <span className="ml-1 text-xs font-normal text-coal-100/40">
+                    {m.product?.unit?.abbreviation || ''}
+                  </span>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }

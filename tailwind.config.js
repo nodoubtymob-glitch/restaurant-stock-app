@@ -8,14 +8,21 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Base charcoal / ember surfaces
+        // Base charcoal / ember surfaces.
+        // Light shades (50-400) are used for text on dark; deep shades (600-950) for surfaces.
         coal: {
-          950: '#0d0b0a',
-          900: '#141110',
-          850: '#1a1614',
-          800: '#211b18',
-          700: '#2b2320',
+          50: '#f8f5f3',
+          100: '#f5f0ec',
+          200: '#e6ded8',
+          300: '#c9bdb4',
+          400: '#a89f98',
+          500: '#7c726b',
           600: '#3a302b',
+          700: '#2b2320',
+          800: '#211b18',
+          850: '#1a1614',
+          900: '#141110',
+          950: '#0d0b0a',
         },
         ember: {
           50: '#fff3ed',
