@@ -35,11 +35,11 @@ export default function Modal({ open, onClose, title, children, footer }: ModalP
       <div className="relative z-10 w-full max-w-lg animate-pop">
         <div className="card m-2 max-h-[92vh] overflow-hidden rounded-3xl sm:m-4">
           {title && (
-            <div className="flex items-center justify-between border-b border-white/5 px-5 py-4">
-              <h3 className="text-lg font-bold">{title}</h3>
+            <div className="flex items-center justify-between border-b border-black/[0.06] px-5 py-4">
+              <h3 className="font-display text-lg font-bold">{title}</h3>
               <button
                 onClick={onClose}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-coal-100/60 hover:bg-white/10 hover:text-coal-100"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-black/[0.05] text-coal-300 hover:bg-black/[0.1] hover:text-coal-100"
                 aria-label="Fechar"
               >
                 ✕
@@ -48,7 +48,7 @@ export default function Modal({ open, onClose, title, children, footer }: ModalP
           )}
           <div className="max-h-[70vh] overflow-y-auto px-5 py-4">{children}</div>
           {footer && (
-            <div className="flex justify-end gap-2 border-t border-white/5 px-5 py-4 safe-bottom">
+            <div className="flex justify-end gap-2 border-t border-black/[0.06] px-5 py-4 safe-bottom">
               {footer}
             </div>
           )}

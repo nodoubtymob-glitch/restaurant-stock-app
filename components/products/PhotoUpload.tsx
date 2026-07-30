@@ -50,7 +50,7 @@ export default function PhotoUpload({
 
   return (
     <div className="flex items-center gap-3">
-      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-coal-850">
+      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-black/[0.08] bg-coal-850">
         {value ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={value} alt="Produto" className="h-full w-full object-cover" />
@@ -73,7 +73,7 @@ export default function PhotoUpload({
         {value && (
           <button
             type="button"
-            className="text-xs text-coal-100/40 hover:text-red-300"
+            className="text-xs text-coal-400 hover:text-red-600"
             onClick={() => onChange(null)}
           >
             Remover

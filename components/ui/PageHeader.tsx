@@ -12,8 +12,10 @@ export default function PageHeader({
   return (
     <div className="mb-5 flex items-start justify-between gap-3">
       <div>
-        <h1 className="text-2xl font-extrabold tracking-tight md:text-3xl">{title}</h1>
-        {subtitle && <p className="mt-0.5 text-sm text-coal-100/50">{subtitle}</p>}
+        <h1 className="font-display text-[26px] font-bold leading-tight tracking-tight md:text-4xl">
+          {title}
+        </h1>
+        {subtitle && <p className="mt-1 text-sm font-medium text-coal-400">{subtitle}</p>}
       </div>
       {action}
     </div>

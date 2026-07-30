@@ -1,5 +1,5 @@
 // Brasaroots Control - minimal offline shell service worker
-const CACHE = 'brasaroots-v1'
+const CACHE = 'brasaroots-v2'
 const APP_SHELL = ['/', '/login', '/manifest.json', '/icons/icon-192.png', '/icons/icon-512.png']
 
 self.addEventListener('install', (event) => {

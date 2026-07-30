@@ -83,13 +83,13 @@ export default function HistoricoPage() {
       <PageHeader title="Histórico" subtitle="Movimentações por período" />
 
       {/* Period filter */}
-      <div className="mb-3 inline-flex rounded-xl bg-white/5 p-1">
+      <div className="mb-3 inline-flex rounded-xl bg-black/[0.05] p-1">
         {PERIODS.map((p) => (
           <button
             key={p.key}
             onClick={() => setPeriod(p.key)}
             className={`rounded-lg px-3.5 py-1.5 text-sm font-semibold transition ${
-              period === p.key ? 'bg-ember text-white shadow-glow-sm' : 'text-coal-100/50'
+              period === p.key ? 'bg-ember text-coal-50 shadow-glow-sm' : 'text-coal-400'
             }`}
           >
             {p.label}
@@ -100,16 +100,16 @@ export default function HistoricoPage() {
       {/* Totals for the period */}
       <div className="mb-4 grid grid-cols-2 gap-2.5">
         <div className="card flex items-center gap-3 p-3.5">
-          <div className="stat-icon bg-emerald-500/15 text-emerald-300">📥</div>
+          <div className="stat-icon bg-emerald-500/15 text-emerald-600">📥</div>
           <div>
-            <p className="text-xs uppercase tracking-wide text-coal-100/45">Entradas</p>
+            <p className="text-xs uppercase tracking-wide text-coal-400">Entradas</p>
             <p className="text-xl font-extrabold">{num(totals.entrada)}</p>
           </div>
         </div>
         <div className="card flex items-center gap-3 p-3.5">
-          <div className="stat-icon bg-red-500/15 text-red-300">📤</div>
+          <div className="stat-icon bg-red-500/15 text-red-600">📤</div>
           <div>
-            <p className="text-xs uppercase tracking-wide text-coal-100/45">Saídas</p>
+            <p className="text-xs uppercase tracking-wide text-coal-400">Saídas</p>
             <p className="text-xl font-extrabold">{num(totals.saida)}</p>
           </div>
         </div>
@@ -123,8 +123,8 @@ export default function HistoricoPage() {
             onClick={() => setType(t.key)}
             className={`rounded-xl px-3.5 py-2 text-sm font-semibold transition ${
               type === t.key
-                ? 'bg-ember-soft text-ember-200 ring-1 ring-inset ring-ember-500/20'
-                : 'bg-white/5 text-coal-100/50 hover:text-coal-100'
+                ? 'bg-ember-soft text-ember-700 ring-1 ring-inset ring-ember-500/20'
+                : 'bg-black/[0.05] text-coal-400 hover:text-coal-100'
             }`}
           >
             {t.label}
@@ -148,7 +148,7 @@ export default function HistoricoPage() {
               <div key={m.id} className="card flex items-center gap-3 p-3.5">
                 <div
                   className={`stat-icon shrink-0 ${
-                    out ? 'bg-red-500/15 text-red-300' : 'bg-emerald-500/15 text-emerald-300'
+                    out ? 'bg-red-500/15 text-red-600' : 'bg-emerald-500/15 text-emerald-600'
                   }`}
                 >
                   {out ? '📤' : '📥'}
@@ -157,7 +157,7 @@ export default function HistoricoPage() {
                   <p className="truncate font-semibold">
                     {m.product?.name || 'Produto removido'}
                   </p>
-                  <p className="truncate text-xs text-coal-100/45">
+                  <p className="truncate text-xs text-coal-400">
                     {dateTimeBR(m.recorded_at)}
                     {m.recorded_by_profile?.email ? ` · ${m.recorded_by_profile.email}` : ''}
                     {m.notes ? ` · ${m.notes}` : ''}
@@ -165,12 +165,12 @@ export default function HistoricoPage() {
                 </div>
                 <div
                   className={`shrink-0 text-right font-bold ${
-                    out ? 'text-red-300' : 'text-emerald-300'
+                    out ? 'text-red-600' : 'text-emerald-600'
                   }`}
                 >
                   {out ? '−' : '+'}
                   {num(Math.abs(m.quantity_change))}
-                  <span className="ml-1 text-xs font-normal text-coal-100/40">
+                  <span className="ml-1 text-xs font-normal text-coal-400">
                     {m.product?.unit?.abbreviation || ''}
                   </span>
                 </div>

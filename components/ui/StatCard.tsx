@@ -10,11 +10,11 @@ interface StatCardProps {
 }
 
 const toneMap: Record<string, string> = {
-  ember: 'bg-ember-500/15 text-ember-300',
-  green: 'bg-emerald-500/15 text-emerald-300',
-  amber: 'bg-amber-500/15 text-amber-300',
-  red: 'bg-red-500/15 text-red-300',
-  neutral: 'bg-white/5 text-coal-100/70',
+  ember: 'bg-ember-500/25 text-ember-700',
+  green: 'bg-emerald-500/15 text-emerald-700',
+  amber: 'bg-amber-500/15 text-amber-700',
+  red: 'bg-red-500/12 text-red-600',
+  neutral: 'bg-black/[0.05] text-coal-300',
 }
 
 export default function StatCard({
@@ -30,15 +30,15 @@ export default function StatCard({
       <div className="flex items-center gap-3">
         <div className={`stat-icon ${toneMap[tone]}`}>{icon}</div>
         <div className="min-w-0">
-          <p className="truncate text-xs font-medium uppercase tracking-wide text-coal-100/45">
+          <p className="truncate text-xs font-medium uppercase tracking-wide text-coal-400">
             {label}
           </p>
-          <p className="mt-0.5 truncate text-2xl font-extrabold tracking-tight">
+          <p className="mt-0.5 truncate font-display text-2xl font-bold tracking-tight">
             {value}
           </p>
         </div>
       </div>
-      {hint && <p className="mt-2 text-xs text-coal-100/40">{hint}</p>}
+      {hint && <p className="mt-2 text-xs text-coal-400">{hint}</p>}
     </div>
   )
 }

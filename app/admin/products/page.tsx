@@ -201,7 +201,7 @@ export default function ProductsPage() {
       />
 
       {!canCreate && !loading && (
-        <div className="card mb-4 border-amber-500/20 bg-amber-500/5 p-4 text-sm text-amber-200">
+        <div className="card mb-4 border-amber-500/20 bg-amber-500/5 p-4 text-sm text-amber-700">
           Antes de cadastrar produtos, crie ao menos uma{' '}
           <Link href="/admin/categories" className="font-semibold underline">
             categoria
@@ -278,7 +278,7 @@ export default function ProductsPage() {
                       </button>
                     </div>
                   </div>
-                  <p className="mt-0.5 text-xs text-coal-100/45">
+                  <p className="mt-0.5 text-xs text-coal-400">
                     {p.category?.name} · {p.unit?.abbreviation || p.unit?.name}
                   </p>
                   <div className="mt-2 flex flex-wrap items-center gap-1.5">

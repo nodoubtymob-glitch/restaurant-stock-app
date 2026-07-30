@@ -127,7 +127,7 @@ export default function CategoriesPage() {
               <div className="min-w-0">
                 <p className="truncate font-semibold">{c.name}</p>
                 {c.description && (
-                  <p className="truncate text-sm text-coal-100/45">{c.description}</p>
+                  <p className="truncate text-sm text-coal-400">{c.description}</p>
                 )}
               </div>
               <div className="flex shrink-0 gap-1.5">

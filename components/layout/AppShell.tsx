@@ -11,7 +11,7 @@ interface NavItem {
   href: string
   label: string
   icon: string
-  bottom?: boolean // shows in mobile bottom bar
+  bottom?: boolean
 }
 
 const ADMIN_NAV: NavItem[] = [
@@ -34,15 +34,17 @@ function Brand({ small }: { small?: boolean }) {
   return (
     <div className="flex items-center gap-2.5">
       <div
-        className={`grid ${
-          small ? 'h-8 w-8' : 'h-9 w-9'
-        } place-items-center rounded-xl bg-ember shadow-glow-sm`}
+        className={`relative grid ${
+          small ? 'h-9 w-9' : 'h-10 w-10'
+        } place-items-center rounded-2xl bg-coal-100`}
       >
-        <span className="text-lg">🔥</span>
+        <span className="h-3.5 w-3.5 rounded-full bg-ember-500 ring-4 ring-ember-500/25" />
       </div>
-      <div className="leading-tight">
-        <p className="text-[15px] font-extrabold tracking-tight">Brasaroots</p>
-        <p className="-mt-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-ember-400/80">
+      <div className="leading-none">
+        <p className="font-display text-[17px] font-bold tracking-tight text-coal-100">
+          Brasaroots
+        </p>
+        <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-coal-400">
           Control
         </p>
       </div>
@@ -79,54 +81,51 @@ export default function AppShell({
     <ToastProvider>
       <div className="min-h-screen">
         {/* Desktop sidebar */}
-        <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-white/5 bg-coal-900/60 backdrop-blur md:flex">
+        <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-black/[0.06] bg-coal-900 md:flex">
           <div className="px-5 py-5">
             <Brand />
           </div>
           <nav className="flex-1 space-y-1 px-3">
-            {nav.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
-                  isActive(item.href)
-                    ? 'bg-ember-soft text-ember-200 ring-1 ring-inset ring-ember-500/20'
-                    : 'text-coal-100/60 hover:bg-white/5 hover:text-coal-100'
-                }`}
-              >
-                <span className="text-lg">{item.icon}</span>
-                {item.label}
-              </Link>
-            ))}
+            {nav.map((item) => {
+              const active = isActive(item.href)
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`flex items-center gap-3 rounded-2xl px-3.5 py-2.5 text-sm font-bold transition ${
+                    active
+                      ? 'bg-coal-100 text-white shadow-ink'
+                      : 'text-coal-300 hover:bg-black/[0.04] hover:text-coal-100'
+                  }`}
+                >
+                  <span className="text-lg">{item.icon}</span>
+                  {item.label}
+                </Link>
+              )
+            })}
           </nav>
-          <div className="border-t border-white/5 p-3">
+          <div className="border-t border-black/[0.06] p-3">
             <div className="mb-2 px-2">
-              <p className="truncate text-xs text-coal-100/40">{email}</p>
-              <span
-                className={role === 'admin' ? 'badge-ember mt-1' : 'badge-muted mt-1'}
-              >
+              <p className="truncate text-xs font-medium text-coal-400">{email}</p>
+              <span className={role === 'admin' ? 'badge-ember mt-1' : 'badge-muted mt-1'}>
                 {role === 'admin' ? 'Administrador' : 'Funcionário'}
               </span>
             </div>
-            <button
-              onClick={logout}
-              disabled={signingOut}
-              className="btn-ghost w-full justify-start"
-            >
+            <button onClick={logout} disabled={signingOut} className="btn-ghost w-full justify-start">
               🚪 {signingOut ? 'Saindo...' : 'Sair'}
             </button>
           </div>
         </aside>
 
         {/* Mobile top bar */}
-        <header className="sticky top-0 z-30 flex items-center justify-between border-b border-white/5 bg-coal-950/80 px-4 py-3 backdrop-blur md:hidden safe-top">
+        <header className="sticky top-0 z-30 flex items-center justify-between border-b border-black/[0.06] bg-coal-950/85 px-4 py-3 backdrop-blur md:hidden safe-top">
           <Brand small />
           <button
             onClick={logout}
             disabled={signingOut}
-            className="flex h-9 items-center gap-1.5 rounded-xl bg-white/5 px-3 text-xs font-semibold text-coal-100/70"
+            className="flex h-9 items-center gap-1.5 rounded-full bg-black/[0.05] px-3.5 text-xs font-bold text-coal-300"
           >
-            🚪 Sair
+            Sair
           </button>
         </header>
 
@@ -138,21 +137,19 @@ export default function AppShell({
         </main>
 
         {/* Mobile bottom nav */}
-        <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-white/5 bg-coal-950/90 backdrop-blur md:hidden safe-bottom">
+        <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-black/[0.06] bg-coal-900/95 backdrop-blur md:hidden safe-bottom">
           <div className="mx-auto flex max-w-lg items-stretch justify-around px-2 pt-1.5">
             {bottomNav.map((item) => {
               const active = isActive(item.href)
               const primary = item.href === '/stock/saida'
-              // The saída action is the day-to-day star: always shown as a
-              // raised ember button so it stands out in the bar.
               if (primary) {
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="flex flex-1 flex-col items-center gap-0.5 px-1 text-[10px] font-bold text-ember-300"
+                    className="flex flex-1 flex-col items-center gap-0.5 px-1 text-[10px] font-bold text-coal-100"
                   >
-                    <span className="-mt-4 grid h-14 w-14 place-items-center rounded-2xl bg-ember text-2xl shadow-glow ring-4 ring-coal-950">
+                    <span className="-mt-5 grid h-14 w-14 place-items-center rounded-2xl bg-ember text-2xl shadow-glow ring-4 ring-coal-900">
                       {item.icon}
                     </span>
                     {item.label}
@@ -163,13 +160,13 @@ export default function AppShell({
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex flex-1 flex-col items-center gap-0.5 rounded-xl px-1 py-1.5 text-[10px] font-semibold transition ${
-                    active ? 'text-ember-300' : 'text-coal-100/45'
+                  className={`flex flex-1 flex-col items-center gap-0.5 px-1 py-1.5 text-[10px] font-bold transition ${
+                    active ? 'text-coal-100' : 'text-coal-400'
                   }`}
                 >
                   <span
                     className={`grid h-8 w-full max-w-[3.5rem] place-items-center rounded-xl text-lg transition ${
-                      active ? 'bg-ember-soft ring-1 ring-inset ring-ember-500/20' : ''
+                      active ? 'bg-coal-100 text-white' : ''
                     }`}
                   >
                     {item.icon}

@@ -158,7 +158,7 @@ export default function QuickSaida() {
       </div>
 
       {filtered.length === 0 && (
-        <p className="py-10 text-center text-sm text-coal-100/40">
+        <p className="py-10 text-center text-sm text-coal-400">
           Nenhum produto encontrado.
         </p>
       )}
@@ -169,11 +169,11 @@ export default function QuickSaida() {
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={close} />
           <div className="relative z-10 w-full max-w-md animate-fade-up">
             <div className="card m-2 rounded-3xl p-5 safe-bottom">
-              <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-white/15" />
+              <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-black/10" />
 
               <div className="mb-1 text-center">
                 <p className="text-lg font-bold">{selected.name}</p>
-                <p className="text-sm text-coal-100/45">
+                <p className="text-sm text-coal-400">
                   Em estoque: {num(selected.current_quantity)} {unitLabel}
                 </p>
               </div>
@@ -184,7 +184,7 @@ export default function QuickSaida() {
               {/* Big stepper */}
               <div className="mb-4 flex items-center justify-center gap-5">
                 <button
-                  className="grid h-16 w-16 place-items-center rounded-full bg-white/5 text-3xl font-bold active:scale-95 disabled:opacity-40"
+                  className="grid h-16 w-16 place-items-center rounded-full bg-black/[0.05] text-3xl font-bold active:scale-95 disabled:opacity-40"
                   onClick={() => setQty((q) => clamp(q - 1))}
                   disabled={qty <= 1}
                 >
@@ -192,12 +192,12 @@ export default function QuickSaida() {
                 </button>
                 <div className="min-w-[4rem] text-center">
                   <div className="text-5xl font-extrabold tabular-nums">{num(qty)}</div>
-                  <div className="text-xs uppercase tracking-wide text-coal-100/40">
+                  <div className="text-xs uppercase tracking-wide text-coal-400">
                     {unitLabel || 'un'}
                   </div>
                 </div>
                 <button
-                  className="grid h-16 w-16 place-items-center rounded-full bg-white/5 text-3xl font-bold active:scale-95 disabled:opacity-40"
+                  className="grid h-16 w-16 place-items-center rounded-full bg-black/[0.05] text-3xl font-bold active:scale-95 disabled:opacity-40"
                   onClick={() => setQty((q) => clamp(q + 1))}
                   disabled={qty >= max}
                 >
@@ -213,8 +213,8 @@ export default function QuickSaida() {
                     onClick={() => setQty(n)}
                     className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
                       qty === n
-                        ? 'bg-ember text-white shadow-glow-sm'
-                        : 'bg-white/5 text-coal-100/60'
+                        ? 'bg-ember text-coal-50 shadow-glow-sm'
+                        : 'bg-black/[0.05] text-coal-400'
                     }`}
                   >
                     {n}
@@ -225,8 +225,8 @@ export default function QuickSaida() {
                     onClick={() => setQty(max)}
                     className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
                       qty === max
-                        ? 'bg-ember text-white shadow-glow-sm'
-                        : 'bg-white/5 text-coal-100/60'
+                        ? 'bg-ember text-coal-50 shadow-glow-sm'
+                        : 'bg-black/[0.05] text-coal-400'
                     }`}
                   >
                     Tudo ({num(max)})

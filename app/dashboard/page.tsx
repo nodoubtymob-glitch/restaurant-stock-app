@@ -137,13 +137,13 @@ export default function DashboardPage() {
       />
 
       {/* Period selector */}
-      <div className="mb-4 inline-flex rounded-xl bg-white/5 p-1">
+      <div className="mb-4 inline-flex rounded-xl bg-black/[0.05] p-1">
         {PERIODS.map((p) => (
           <button
             key={p.key}
             onClick={() => setPeriod(p.key)}
             className={`rounded-lg px-3.5 py-1.5 text-sm font-semibold transition ${
-              period === p.key ? 'bg-ember text-white shadow-glow-sm' : 'text-coal-100/50'
+              period === p.key ? 'bg-ember text-coal-50 shadow-glow-sm' : 'text-coal-400'
             }`}
           >
             {p.label}
@@ -170,9 +170,9 @@ export default function DashboardPage() {
 
           {/* Daily sales chart */}
           <div className="card p-4">
-            <p className="mb-3 text-sm font-semibold text-coal-100/70">Vendas por dia</p>
+            <p className="mb-3 text-sm font-semibold text-coal-400">Vendas por dia</p>
             {bars.every((b) => b.value === 0) ? (
-              <p className="py-8 text-center text-sm text-coal-100/40">Sem vendas no período.</p>
+              <p className="py-8 text-center text-sm text-coal-400">Sem vendas no período.</p>
             ) : (
               <div className="flex h-40 items-end gap-1.5">
                 {bars.map((b, i) => (
@@ -185,7 +185,7 @@ export default function DashboardPage() {
                       />
                     </div>
                     {bars.length <= 10 && (
-                      <span className="text-[9px] text-coal-100/35">{b.label}</span>
+                      <span className="text-[9px] text-coal-400">{b.label}</span>
                     )}
                   </div>
                 ))}
@@ -196,11 +196,11 @@ export default function DashboardPage() {
           {/* Stock alerts card */}
           <div className="card p-4">
             <div className="mb-3 flex items-center justify-between">
-              <p className="text-sm font-semibold text-coal-100/70">Alertas de estoque</p>
+              <p className="text-sm font-semibold text-coal-400">Alertas de estoque</p>
               {alertCount > 0 && <span className="badge-red">{alertCount}</span>}
             </div>
             {alertCount === 0 ? (
-              <p className="py-4 text-center text-sm text-coal-100/40">
+              <p className="py-4 text-center text-sm text-coal-400">
                 ✅ Tudo em ordem, nada faltando.
               </p>
             ) : (
@@ -210,7 +210,7 @@ export default function DashboardPage() {
                   return (
                     <div
                       key={p.id}
-                      className="flex items-center justify-between rounded-xl bg-white/5 px-3.5 py-2.5"
+                      className="flex items-center justify-between rounded-xl bg-black/[0.05] px-3.5 py-2.5"
                     >
                       <span className="truncate font-medium">{p.name}</span>
                       <span className={out ? 'badge-red shrink-0' : 'badge-amber shrink-0'}>
@@ -252,7 +252,7 @@ export default function DashboardPage() {
         <div className="space-y-5">
           {outItems.length > 0 && (
             <div>
-              <p className="mb-2 flex items-center gap-2 text-sm font-bold text-red-300">
+              <p className="mb-2 flex items-center gap-2 text-sm font-bold text-red-600">
                 ⛔ Acabou ({outItems.length})
               </p>
               <div className="space-y-1.5">
@@ -271,7 +271,7 @@ export default function DashboardPage() {
 
           {lowItems.length > 0 && (
             <div>
-              <p className="mb-2 flex items-center gap-2 text-sm font-bold text-amber-300">
+              <p className="mb-2 flex items-center gap-2 text-sm font-bold text-amber-700">
                 ⚠️ Acabando ({lowItems.length})
               </p>
               <div className="space-y-1.5">

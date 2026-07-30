@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 html,
@@ -13,15 +13,16 @@ body {
 
 body {
   @apply bg-coal-950 text-coal-100 antialiased;
-  background-image:
-    radial-gradient(900px 500px at 50% -10%, rgba(255, 90, 31, 0.12), transparent 60%),
-    radial-gradient(600px 400px at 100% 0%, rgba(245, 158, 11, 0.06), transparent 55%);
-  background-attachment: fixed;
-  color: #f5f0ec;
+  color: #141417;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Respect iOS safe areas for the PWA */
+.font-display {
+  font-family: var(--font-display), ui-rounded, 'Segoe UI', system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* iOS safe areas for the PWA */
 .safe-bottom {
   padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem);
 }
@@ -31,60 +32,62 @@ body {
 
 @layer components {
   .card {
-    @apply rounded-2xl border border-white/5 bg-coal-900/80 shadow-card backdrop-blur;
+    @apply rounded-3xl border border-black/[0.06] bg-coal-900 shadow-card;
   }
   .card-hover {
-    @apply transition-all duration-200 hover:border-ember-500/30 hover:shadow-glow-sm;
+    @apply transition-all duration-200 hover:shadow-soft hover:border-black/[0.1];
   }
 
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-150 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50 select-none;
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold transition-all duration-150 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50 select-none;
   }
   .btn-primary {
-    @apply btn bg-ember text-white shadow-glow-sm hover:brightness-110;
+    @apply btn bg-ember text-coal-50 shadow-glow-sm hover:brightness-[1.03];
+  }
+  .btn-dark {
+    @apply btn bg-coal-100 text-white hover:bg-ink-800;
   }
   .btn-ghost {
-    @apply btn bg-white/5 text-coal-100 hover:bg-white/10;
+    @apply btn bg-black/[0.05] text-coal-100 hover:bg-black/[0.09];
   }
   .btn-danger {
-    @apply btn bg-red-500/15 text-red-300 hover:bg-red-500/25;
+    @apply btn bg-red-500/10 text-red-600 hover:bg-red-500/[0.18];
   }
   .btn-lg {
-    @apply px-5 py-3.5 text-base rounded-2xl;
+    @apply px-6 py-3.5 text-base;
   }
 
   .field {
-    @apply w-full rounded-xl border border-white/10 bg-coal-850 px-3.5 py-2.5 text-[15px] text-coal-100 placeholder:text-coal-100/30 outline-none transition focus:border-ember-500/60 focus:ring-2 focus:ring-ember-500/20;
+    @apply w-full rounded-2xl border border-black/[0.08] bg-coal-850 px-4 py-3 text-[15px] font-medium text-coal-100 placeholder:font-normal placeholder:text-coal-400 outline-none transition focus:border-ember-500 focus:bg-coal-900 focus:ring-4 focus:ring-ember-500/20;
   }
   .label {
-    @apply mb-1.5 block text-xs font-medium uppercase tracking-wide text-coal-100/50;
+    @apply mb-1.5 block text-xs font-bold uppercase tracking-wide text-coal-400;
   }
 
   .badge {
-    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold;
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold;
   }
   .badge-ember {
-    @apply badge bg-ember-500/15 text-ember-300;
+    @apply badge bg-ember-500/20 text-ember-700;
   }
   .badge-green {
-    @apply badge bg-emerald-500/15 text-emerald-300;
+    @apply badge bg-emerald-500/15 text-emerald-700;
   }
   .badge-red {
-    @apply badge bg-red-500/15 text-red-300;
+    @apply badge bg-red-500/12 text-red-600;
   }
   .badge-amber {
-    @apply badge bg-amber-500/15 text-amber-300;
+    @apply badge bg-amber-500/15 text-amber-700;
   }
   .badge-muted {
-    @apply badge bg-white/5 text-coal-100/60;
+    @apply badge bg-black/[0.06] text-coal-300;
   }
 
   .stat-icon {
-    @apply flex h-11 w-11 items-center justify-center rounded-xl text-xl;
+    @apply flex h-11 w-11 items-center justify-center rounded-2xl text-xl;
   }
 }
 
-/* Inputs reset so global.css doesn't fight the .field class */
 input,
 select,
 textarea,
@@ -92,15 +95,14 @@ button {
   font: inherit;
 }
 
-/* Nice scrollbars */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(16, 16, 20, 0.14);
   border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(16, 16, 20, 0.24);
 }

@@ -68,13 +68,13 @@ export default function LoginForm() {
       </div>
 
       {error && (
-        <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-3.5 py-2.5 text-sm text-red-200">
+        <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-3.5 py-2.5 text-sm text-red-600">
           {error}
         </div>
       )}
 
       <button type="submit" disabled={loading} className="btn-primary btn-lg w-full">
-        {loading ? <Spinner /> : '🔥'} {loading ? 'Entrando...' : 'Entrar'}
+        {loading ? <Spinner /> : null} {loading ? 'Entrando...' : 'Entrar →'}
       </button>
     </form>
   )

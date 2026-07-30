@@ -39,7 +39,7 @@ export default function Confirm({
         </>
       }
     >
-      <p className="text-coal-100/80">{message}</p>
+      <p className="text-coal-400">{message}</p>
     </Modal>
   )
 }

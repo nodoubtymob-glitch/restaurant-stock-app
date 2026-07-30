@@ -129,7 +129,7 @@ export default function StockMovementForm({
             >
               <div className="min-w-0">
                 <p className="truncate font-semibold">{p.name}</p>
-                <p className="text-xs text-coal-100/45">
+                <p className="text-xs text-coal-400">
                   {p.category?.name} · {p.unit?.abbreviation || p.unit?.name}
                 </p>
               </div>
@@ -147,13 +147,13 @@ export default function StockMovementForm({
           <div className="flex items-center justify-between">
             <div className="min-w-0">
               <p className="truncate font-bold">{selected.name}</p>
-              <p className="text-xs text-coal-100/45">
+              <p className="text-xs text-coal-400">
                 Em estoque: {num(selected.current_quantity)}{' '}
                 {selected.unit?.abbreviation || selected.unit?.name}
               </p>
             </div>
             <button
-              className="text-sm text-coal-100/40 hover:text-coal-100"
+              className="text-sm text-coal-400 hover:text-coal-100"
               onClick={() => setSelected(null)}
             >
               trocar

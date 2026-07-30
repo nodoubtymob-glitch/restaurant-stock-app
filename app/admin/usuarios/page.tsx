@@ -111,7 +111,7 @@ export default function UsuariosPage() {
                   className={`stat-icon shrink-0 ${
                     p.role === 'admin'
                       ? 'bg-ember-500/15 text-ember-300'
-                      : 'bg-white/5 text-coal-100/60'
+                      : 'bg-black/[0.05] text-coal-400'
                   }`}
                 >
                   {p.role === 'admin' ? '👑' : '🧑‍🍳'}
@@ -153,7 +153,7 @@ export default function UsuariosPage() {
         }
       >
         <div className="space-y-4">
-          <p className="rounded-xl bg-white/5 px-3.5 py-2.5 text-sm text-coal-100/60">
+          <p className="rounded-xl bg-black/[0.05] px-3.5 py-2.5 text-sm text-coal-400">
             O funcionário poderá apenas <b>registrar saídas</b> e ver o histórico.
             Não vê preços nem faturamento.
           </p>
