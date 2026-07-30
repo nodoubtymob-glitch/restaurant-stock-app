@@ -1,14 +1,6 @@
 import type { Metadata, Viewport } from 'next'
-import { Fredoka } from 'next/font/google'
 import '@/app/globals.css'
 import RegisterSW from '@/components/pwa/RegisterSW'
-
-const display = Fredoka({
-  subsets: ['latin'],
-  weight: ['500', '600', '700'],
-  variable: '--font-display',
-  display: 'swap',
-})
 
 export const metadata: Metadata = {
   title: 'Brasaroots Control',
@@ -43,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="pt-BR" className={display.variable}>
+    <html lang="pt-BR">
       <body>
         {children}
         <RegisterSW />

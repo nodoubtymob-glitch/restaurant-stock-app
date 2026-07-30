@@ -71,13 +71,13 @@ body {
     @apply badge bg-ember-500/20 text-ember-700;
   }
   .badge-green {
-    @apply badge bg-emerald-500/15 text-emerald-700;
+    @apply badge bg-emerald-500/[0.15] text-emerald-700;
   }
   .badge-red {
-    @apply badge bg-red-500/12 text-red-600;
+    @apply badge bg-red-500/[0.12] text-red-600;
   }
   .badge-amber {
-    @apply badge bg-amber-500/15 text-amber-700;
+    @apply badge bg-amber-500/[0.15] text-amber-700;
   }
   .badge-muted {
     @apply badge bg-black/[0.06] text-coal-300;
