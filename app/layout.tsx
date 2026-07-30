@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { createServerClient } from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import '@/app/globals.css'
 
