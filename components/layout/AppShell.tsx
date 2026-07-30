@@ -16,17 +16,19 @@ interface NavItem {
 
 const ADMIN_NAV: NavItem[] = [
   { href: '/dashboard', label: 'Painel', icon: '📊', bottom: true },
-  { href: '/admin/products', label: 'Produtos', icon: '📦', bottom: true },
+  { href: '/comandas', label: 'Comandas', icon: '📋', bottom: true },
   { href: '/stock/saida', label: 'Saída', icon: '📤', bottom: true },
+  { href: '/admin/products', label: 'Produtos', icon: '📦', bottom: true },
   { href: '/stock/entrada', label: 'Entrada', icon: '📥' },
-  { href: '/historico', label: 'Histórico', icon: '🧾', bottom: true },
+  { href: '/historico', label: 'Histórico', icon: '🧾' },
   { href: '/admin/categories', label: 'Categorias', icon: '🏷️' },
   { href: '/admin/units', label: 'Unidades', icon: '📏' },
   { href: '/admin/usuarios', label: 'Equipe', icon: '👥' },
 ]
 
 const STAFF_NAV: NavItem[] = [
-  { href: '/stock/saida', label: 'Registrar Saída', icon: '📤', bottom: true },
+  { href: '/comandas', label: 'Comandas', icon: '📋', bottom: true },
+  { href: '/stock/saida', label: 'Saída', icon: '📤', bottom: true },
   { href: '/historico', label: 'Histórico', icon: '🧾', bottom: true },
 ]
 
